@@ -11,6 +11,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import routes from './src/utils/routes';
 
+
 import Login from './src/screens/login';
 import Register from './src/screens/register';
 import Home from './src/screens/home';
@@ -24,7 +25,7 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen name={routes.login} component={Login}  />
         <Stack.Screen name={routes.register} component={Register} />
-        <Stack.Screen name={routes.home} component={Home} />
+        <Stack.Screen options={{headerShown: false}} name={routes.home} component={Home} />
         <Stack.Screen name={routes.newsDetails} component={NewsDetails} />
       </Stack.Navigator>
     </NavigationContainer>

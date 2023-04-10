@@ -4,7 +4,7 @@ import { getNewsList } from '../../../apiService/news';
 import SingleNews from '../../../components/singleNews';
 import routes from '../../../utils/routes';
 
-const news = (props) => {
+const News = (props) => {
 
   let { navigation } = props;
 
@@ -45,4 +45,4 @@ const news = (props) => {
   
 }
 
-export default news;
+export default News;

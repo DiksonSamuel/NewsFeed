@@ -7,15 +7,40 @@ import News from './news';
 import Bookmark from './bookmark';
 import Profile from './profile';
 
+import * as Icon from "react-native-feather";
+
 const Tab = createBottomTabNavigator();
 
 const Home = (props) => {
 
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
-      <Tab.Screen name={routes.news} component={News} />
-      <Tab.Screen name={routes.bookmark} component={Bookmark} />
-      <Tab.Screen name={routes.profile} component={Profile} />
+    <Tab.Navigator screenOptions={{  }}>
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon.Home color={color} height={size} width={size} />
+          ),
+        }}
+        name={routes.news}
+        component={News}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon.Bookmark color={color} height={size} width={size} />
+          ),
+        }}
+        name={routes.bookmark}
+        component={Bookmark} />
+      <Tab.Screen
+        name={routes.profile}
+        component={Profile}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon.User color={color} height={size} width={size} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   )
 }

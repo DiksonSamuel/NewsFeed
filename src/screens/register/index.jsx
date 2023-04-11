@@ -12,10 +12,10 @@ import base64 from 'react-native-base64'
 
 const Register = ({navigation}) => {
 
-  const [firstName, setFirstName] = useState("Diksom");
-  const [lastName, setLastName] = useState("Samuel");
-  const [email, setEmail] = useState("diksonsamuel@gmail.com");
-  const [password, setPassword] = useState("diksonDhoni");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const firstNameInput = useRef();
   const lastNameInput = useRef();

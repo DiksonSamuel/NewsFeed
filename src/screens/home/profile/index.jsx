@@ -13,6 +13,7 @@ import { getCurrentUser, getDBConnection, saveUserItems, updateQuery, addProfile
 import routes from '../../../utils/routes';
 import { ActivityIndicator } from 'react-native-paper';
 import { hasImageAlreadyPickerData, noImagePicker, noImagePickerData } from '../../../utils/profileImagePickerData';
+import { CommonActions } from '@react-navigation/native';
 
 const Profile = ({ navigation, route }) => {
 
@@ -48,8 +49,8 @@ const Profile = ({ navigation, route }) => {
   
 
   onLogout = () => {
-    updateData('userLoggedIn', 0)
-    navigation.replace(routes.login, {})
+    updateData('userLoggedIn', 0).then(() => navigation.replace(routes.login, {}))
+    
   }
 
   onUpdateProfile = async (updatedData) => {

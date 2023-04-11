@@ -7,7 +7,7 @@ import styles from './styles';
 import { Form, FormItem } from 'react-native-form-component';
 import { containsUppercase } from '../../utils/commonFunctions';
 import base64 from 'react-native-base64'
-import { getUserData, createTable, getDBConnection, saveUserItems, updateQuery } from '../../dbQueries';
+import { getUserData, getDBConnection, updateQuery } from '../../dbQueries';
 
 const Login = ({ navigation }) => {
 

@@ -1,8 +1,9 @@
 import  React, {useEffect, useState} from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 import { getNewsList } from '../../../apiService/news';
 import SingleNews from '../../../components/singleNews';
 import routes from '../../../utils/routes';
+import styles from './styles';
 
 const News = (props) => {
 
@@ -26,18 +27,18 @@ const News = (props) => {
 
   if(loader) {
     return(
-      <View>
+      <View style={styles.loaderView}>
         <ActivityIndicator animating={true} />
       </View>
     )
   } else {
     return(
-      <View>
+      <View style={styles.main}>
         <FlatList
+        style={styles.main}
           data={newsList}
-          renderItem={({item, index}) => <SingleNews data={item} index={index} openNewsDetails={(url) => navigation.navigate(routes.newsDetails, {url: url})} /> }
+          renderItem={({item, index}) => <SingleNews data={item} index={index} openNewsDetails={() => navigation.navigate(routes.newsDetails, {newsData: item})} /> }
         />
-  
       </View>
     )
   }

@@ -25,7 +25,11 @@ const strings = {
   photoLibrary: 'Photo Library',
   cancel: 'Cancel',
   updateProfile: 'Update Profile',
-  update: 'Update'
+  update: 'Update',
+  bookmarkEmptyState: 'No news bookmarked yet!',
+  bookmarkedRemoved: 'Bookmark removed!',
+  newsBookmarked: 'News bookmaked!',
+  remove: 'Remove'
 };
 
 export default strings;

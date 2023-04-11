@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import styles from './styles';
 import * as Icon from "react-native-feather";
 import strings from '../../utils/strings';
 import { Form, FormItem } from 'react-native-form-component';
 import colors from '../../utils/colors';
 
-const UpdateProfileModal = ({ onUpdateClick, onClose }) => {
+const UpdateProfileModal = ({ data, onUpdateClick, onClose }) => {
 
-  const [firstName, setFirstName] = useState("Dikson");
-  const [lastName, setLastName] = useState("Samuel");
+  const [firstName, setFirstName] = useState(data.firstName);
+  const [lastName, setLastName] = useState(data.lastName);
 
   return (
     <SafeAreaView style={styles.mainContainer}>

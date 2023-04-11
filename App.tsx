@@ -5,12 +5,12 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import routes from './src/utils/routes';
-import { getUserData, createTable, getDBConnection, saveUserItems, getCurrentUser } from './src/dbQueries';
+import { createTable, getDBConnection, getCurrentUser } from './src/dbQueries';
 
 import Login from './src/screens/login';
 import Register from './src/screens/register';
@@ -21,9 +21,13 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
 
+  const [statusLoaded, setStatusLoaded] = useState(false)
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+
   useEffect(() => {
     initializeDB()
-    getUserData()
+    getUserLoggedIn()
   }, [])
 
   const initializeDB = async () => {
@@ -31,21 +35,27 @@ const App = () => {
     await createTable(db);
   }
 
-  const getUserData = async () => {
-    let dd = await getCurrentUser();
+  const getUserLoggedIn = async () => {
+    let userData = await getCurrentUser();
 
-    alert(JSON.stringify(dd))
+    setUserLoggedIn(Object.keys(userData).length > 0 ? true : false);
+    setStatusLoaded(true)
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name={routes.login} component={Login}  />
-        <Stack.Screen name={routes.register} component={Register} />
-        <Stack.Screen options={{headerShown: false}} name={routes.home} component={Home} />
-        <Stack.Screen name={routes.newsDetails} component={NewsDetails} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      {statusLoaded && (
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName={userLoggedIn ? routes.home : routes.login}>
+            <Stack.Screen name={routes.login} component={Login} />
+            <Stack.Screen name={routes.register} component={Register} />
+            <Stack.Screen options={{ headerShown: false }} name={routes.home} component={Home} />
+            <Stack.Screen name={routes.newsDetails} component={NewsDetails} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )}
+    </>
+
   );
 }
 

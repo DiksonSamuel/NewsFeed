@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../../utils/colors';
 
 
 const styles = StyleSheet.create({
@@ -10,6 +9,11 @@ const styles = StyleSheet.create({
   logoutButton: {
     marginTop: 300,
     padding: 10
+  },
+  loaderView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

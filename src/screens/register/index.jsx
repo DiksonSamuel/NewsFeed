@@ -1,17 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, Alert } from 'react-native';
 import styles from './styles';
-import { Button } from 'react-native-paper';
-import CustomInput from '../../components/customInput';
 import colors from '../../utils/colors';
 import routes from '../../utils/routes';
 import strings from '../../utils/strings';
 import { containsUppercase } from '../../utils/commonFunctions';
 
 import { Form, FormItem } from 'react-native-form-component';
-import { getUserData, createTable, getDBConnection, saveUserItems, getCount } from '../../dbQueries';
+import { getUserData, getDBConnection, saveUserItems, getCount } from '../../dbQueries';
 import base64 from 'react-native-base64'
-import uuid from 'react-native-uuid';
 
 const Register = ({navigation}) => {
 

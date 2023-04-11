@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import routes from '../../utils/routes';
 
@@ -14,7 +13,7 @@ const Tab = createBottomTabNavigator();
 const Home = (props) => {
 
   return (
-    <Tab.Navigator screenOptions={{  }}>
+    <Tab.Navigator>
       <Tab.Screen
         options={{
           tabBarIcon: ({ color, size }) => (

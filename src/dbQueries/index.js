@@ -1,3 +1,4 @@
+import { indigo100 } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
 import { enablePromise, openDatabase, SQLiteDatabase } from 'react-native-sqlite-storage';
 
 const tableName = 'userData';
@@ -9,7 +10,7 @@ export const getDBConnection = async () => {
 };
 
 export const createTable = async (db) => {
-  const query = `CREATE TABLE IF NOT EXISTS ${tableName} ("id" TEXT PRIMARY KEY, "firstName" TEXT, "lastName" TEXT, "email" TEXT, "password" TEXT, "userLoggedIn" INTEGER, "profileImageURI" TEXT, "bookmarks" TEXT)`
+  const query = `CREATE TABLE IF NOT EXISTS ${tableName} ("id" INTEGER PRIMARY KEY, "firstName" TEXT, "lastName" TEXT, "email" TEXT, "password" TEXT, "userLoggedIn" INTEGER, "profileImageURI" BLOB, "bookmarks" BLOB)`
   await db.executeSql(query);
 };
 
@@ -30,24 +31,12 @@ export const getUserItems = async (db) => {
 };
 
 export const saveUserItems = async (db, userItems) => {
-  alert(userItems.id)
   let values = `(${userItems.id}, '${userItems.firstName}', '${userItems.lastName}', '${userItems.email}', '${userItems.password}', '${userItems.userLoggedIn}', '${userItems.profileImageURI}', '${userItems.bookmarks}')`;
   const insertQuery =
     `INSERT OR REPLACE INTO ${tableName}(rowid, firstName, lastName, email, password, userLoggedIn, profileImageURI, bookmarks) values` +
     values;
 
   return db.executeSql(insertQuery);
-};
-
-export const deleteTodoItem = async (db, id) => {
-  const deleteQuery = `DELETE from ${tableName} where rowid = ${id}`;
-  await db.executeSql(deleteQuery);
-};
-
-export const deleteTable = async (db) => {
-  const query = `drop table ${tableName}`;
-
-  await db.executeSql(query);
 };
 
 export const getUserData = async (db, email) => {
@@ -88,8 +77,56 @@ export const getCurrentUser = async () => {
   const db = await getDBConnection()
   const query = `SELECT * FROM ${tableName} WHERE userLoggedIn LIKE 1`
   
-  let result = await db.executeSql(query);
-  let userData = result
-  return data;
+  let results = await db.executeSql(query);
+  let userData = {};
+  if(results[0].rows.length > 0) {
+    userData = results[0].rows.item(0)
+  }
+  
+  return userData;
+}
+
+export const addBookmarkData = async (bookmarkData, id) => {
+  const db = await getDBConnection()
+  db.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE ${tableName} SET bookmarks = ? WHERE id = ?`,
+      [JSON.stringify(bookmarkData), id],
+      (_, result) => console.log('Data inserted successfully.'),
+      (_, error) => console.log('Error inserting data: ', error)
+    );
+  });
 }
  
+
+export const getBookmarkData = async (id) => {
+  const db = await getDBConnection()
+  let bookmarkData = [];
+  await db.transaction((tx) => {
+    tx.executeSql(
+      `SELECT bookmarks FROM  ${tableName} WHERE id = ?`,
+      [id],
+      (_, result) => {
+        const rows = result.rows.raw();
+        const data = rows.map((row) => JSON.parse(row.bookmarks));
+        bookmarkData = data
+        console.log('Data retrieved successfully: ', data);
+      },
+      (_, error) => console.log('Error retrieving data: ', error)
+    );
+  });
+
+  return data
+}
+
+export const addProfilePicData = async (picData, id) => {
+  const db = await getDBConnection()
+  db.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE ${tableName} SET profileImageURI = ? WHERE id = ?`,
+      [picData, id],
+      (_, result) => console.log('Data inserted successfully.'),
+      (_, error) => console.log('Error inserting data: ', error)
+    );
+  });
+}

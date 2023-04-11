@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, Alert, TouchableOpacity, Modal } from 'react-native';
+import { View, Button, Alert, TouchableOpacity, Modal } from 'react-native';
 import styles from './styles';
 import * as Icon from "react-native-feather";
 import TextProfileInfo from '../../../components/textProfileInfo';
@@ -9,16 +9,32 @@ import colors from '../../../utils/colors';
 import ActionSheet from 'react-native-actionsheet'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import UpdateProfileModal from '../../../components/updateProfileModal';
-import { updateQuery } from '../../../dbQueries';
+import { getCurrentUser, getDBConnection, saveUserItems, updateQuery, addProfilePicData } from '../../../dbQueries';
 import routes from '../../../utils/routes';
+import { ActivityIndicator } from 'react-native-paper';
+import { hasImageAlreadyPickerData, noImagePicker, noImagePickerData } from '../../../utils/profileImagePickerData';
 
 const Profile = ({ navigation, route }) => {
 
-  const [profileData, setProfileData] = useState({ firstName: 'Dikson', lastName: 'Samuel', email: 'diksonsamuel11@gmail.com', imageURI: '' });
+  const [profileData, setProfileData] = useState(getCurrentUser());
   const actionsheetRef = useRef(null);
   const [updateModalVisibility, setUpdateModalVisibility] = useState(false);
+  const [loader, setLoader] = useState(true)
 
   useEffect(() => {
+    setNavigationButton()
+    fetchCurrentUser()
+   
+    
+  }, [])
+
+  fetchCurrentUser = async () => {
+    let userData = await getCurrentUser();
+    setProfileData(userData)
+    setLoader(false)
+  }
+
+  setNavigationButton = () => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity style={{ paddingRight: 20 }} onPress={() => setUpdateModalVisibility(true)}>
@@ -26,19 +42,28 @@ const Profile = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
     });
-  }, [])
+  }
 
-  updateData = (type, value, id) => updateQuery(type, value, id);
+  updateData = async (type, value) => updateQuery(type, value, profileData.id);
+  
 
   onLogout = () => {
-    updateData('userLoggedIn', 0, 1)
+    updateData('userLoggedIn', 0)
     navigation.replace(routes.login, {})
   }
 
-  onUpdateProfile = (firstName, lastName) => {
-    ["firstName","lastName"].map(type => {
-      //updateData(type, firstName, 1)
+  onUpdateProfile = async (updatedData) => {
+    const db = await getDBConnection()
+
+    let userDataObject = Object.assign({}, profileData);
+    userDataObject.firstName = updatedData.firstName;
+    userDataObject.lastName = updatedData.lastName;
+
+    saveUserItems(db, userDataObject).then(() => {
+      setProfileData(userDataObject)
+      setUpdateModalVisibility(false)
     })
+
   }
 
   openLogoutAlert = () => {
@@ -60,35 +85,47 @@ const Profile = ({ navigation, route }) => {
   }
 
   openPicker = async (type) => {
-
     if (type == 0) {
       const res = await launchCamera({
         saveToPhotos: true,
         mediaType: 'photo',
         includeBase64: false,
       });
-      changePicture(res)
-    } else {
+      changePicture(res.assets[0].uri)
+    } else  if(type == 1){
       const res = await launchImageLibrary({
         maxHeight: 200,
         maxWidth: 200,
         selectionLimit: 0,
         mediaType: 'photo',
       });
-      changePicture(res)
+      changePicture(res.assets[0].uri)
+    } else {
+      changePicture('')
     }
   }
 
-  changePicture = (res) => {
+  changePicture = (uri) => {
     let stateData = Object.assign({}, profileData)
-    stateData.imageURI = res.assets[0].uri;
-    setProfileData(stateData)
-    //updateData("profileImageURI", stateData.imageURI, 1)
+    stateData.profileImageURI = uri;
+
+    addProfilePicData(stateData.profileImageURI, profileData.id).then(() => {
+      setProfileData(stateData)
+    })
+    
+  }
+
+  if(loader) {
+    return(
+      <View style={styles.loaderView}>
+        <ActivityIndicator animating={true} />
+      </View>
+    )
   }
 
   return (
     <View style={styles.mainContainer}>
-      <ProfileImage onPress={() => actionsheetRef.current.show()} imageURI={profileData.imageURI} />
+      <ProfileImage onPress={() => actionsheetRef.current.show()} imageURI={profileData.profileImageURI} />
       <TextProfileInfo title={strings.firstName} value={profileData.firstName} />
       <TextProfileInfo title={strings.lastName} value={profileData.lastName} />
       <TextProfileInfo title={strings.emailId} value={profileData.email} />
@@ -96,18 +133,22 @@ const Profile = ({ navigation, route }) => {
 
       <ActionSheet
         ref={actionsheetRef}
-        title={'Which one do you like ?'}
-        options={[strings.camera, strings.photoLibrary, strings.cancel]}
-        cancelButtonIndex={2}
+        title={''}
+        options={profileData.profileImageURI.length == 0 ? noImagePickerData : hasImageAlreadyPickerData}
+        cancelButtonIndex={profileData.profileImageURI.length == 0 ? 2 : 3}
+        destructiveButtonIndex={profileData.profileImageURI.length == 0 ? -1 : 2}
         onPress={(index) => {
-          if (index != 2) {
+          if (index != 2 && profileData.profileImageURI.length == 0 || profileData.profileImageURI.length > 0 && index != 3) {
             openPicker(index);
           }
         }}
       />
-
       <Modal visible={updateModalVisibility}>
-        <UpdateProfileModal onUpdateClick={(firstName, lastName) => onUpdateClick(firstName, lastName)} onClose={() => setUpdateModalVisibility(false)} />
+        <UpdateProfileModal 
+          onUpdateClick={(updatedData) => onUpdateProfile(updatedData)} 
+          onClose={() => setUpdateModalVisibility(false)}
+          data={profileData}
+        />
       </Modal>
 
     </View>

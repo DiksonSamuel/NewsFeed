@@ -17,7 +17,15 @@ const strings = {
   pleaseEnterFirstName: 'Please enter first name',
   pleaseEnterPassword: 'Password should have more than 6 charecter and atleast 1 uppercase',
   pleaseEnterValidPassword: 'Please enter valid password',
-  createNewAccount: 'Create New Account'
+  createNewAccount: 'Create New Account',
+  userAlreadyRegistered: 'User already registered!',
+  userIsNotRegisteredYet: 'User not registered yet!',
+  invalidPassword: 'Invalid password!',
+  camera: 'Camera',
+  photoLibrary: 'Photo Library',
+  cancel: 'Cancel',
+  updateProfile: 'Update Profile',
+  update: 'Update'
 };
 
 export default strings;

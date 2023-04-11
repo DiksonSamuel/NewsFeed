@@ -1,54 +1,43 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
-import CustomInput from '../../components/customInput';
+import { View, Text, Alert } from 'react-native';
 import colors from '../../utils/colors';
 import routes from '../../utils/routes';
 import strings from '../../utils/strings';
 import styles from './styles';
 import { Form, FormItem } from 'react-native-form-component';
 import { containsUppercase } from '../../utils/commonFunctions';
+import base64 from 'react-native-base64'
+import { getUserData, createTable, getDBConnection, saveUserItems, updateQuery } from '../../dbQueries';
 
-const Login = (props) => {
+const Login = ({ navigation }) => {
 
-  let { navigation } = props;
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("diksonsamuel@gmail.com");
+  const [password, setPassword] = useState("diksonDhoni");
 
   openRegister = () => navigation.navigate(routes.register, {})
+
+  onLoginClick = async () => {
+    const db = await getDBConnection();
+    const userData = await getUserData(db, email);
+    if(Object.keys(userData).length > 0) {
+      if(base64.encode(password) == userData.password) {
+        
+        updateQuery('userLoggedIn', 1, userData.id)
+        navigation.navigate(routes.home, {})
+      } else {
+        Alert.alert(strings.invalidPassword)
+      }
+    } else {
+      Alert.alert(strings.userIsNotRegisteredYet)
+    }
+  }
 
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.header}>{strings.welcomeBack}</Text>
-      {/* <View style={styles.focusBlock}>
-        <CustomInput
-          value={emailText}
-          style={styles.inputStyle}
-          onChangeText={setEmailText}
-          placeholder={strings.enterEmailID}
-          keyboardType="email-address"
-          secureTextEntry={false}
-        />
-        <CustomInput
-          value={password}
-          style={{}}
-          onChangeText={setPassword}
-          placeholder={strings.enterPassword}
-          keyboardType="default"
-          secureTextEntry={true}
-        />
-      </View>
-      <Button
-        mode='contained'
-        buttonColor={colors.blue}
-        style={styles.button}
-        onPress={() => navigation.replace(routes.home, {})}>
-        {strings.login}
-      </Button> */}
       <Form
         style={styles.focusBlock}
-        onButtonPress={() => console.warn(data)}
+        onButtonPress={onLoginClick}
         buttonText={strings.login}
         buttonStyle={{ backgroundColor: colors.blue }}
       >

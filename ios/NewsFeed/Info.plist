@@ -35,6 +35,10 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>NewsFeed needs photo library permission</string>
+  <key>NSCameraUsageDescription</key>
+  <string>NewsFeed needs camera permission</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

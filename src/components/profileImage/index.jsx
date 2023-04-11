@@ -1,21 +1,29 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 import * as Icon from "react-native-feather";
 
-const ProfileImage = ({imageURI}) => {
+const ProfileImage = ({imageURI, onPress}) => {
 
-  if(imageURI.length > 0) {
-    return(
-      <View />
-    )
-  } else {
-    return(
-      <View style={styles.addProfileImageBlock}>
-        <Icon.Camera />
-      </View>
-    )
+  renderMain = () => {
+    if(imageURI.length > 0) {
+      return(
+        <Image style={styles.addProfileImageBlock} source={{uri: imageURI}} />
+      )
+    } else {
+      return(
+        <View style={styles.addProfileImageBlock}>
+          <Icon.Camera />
+        </View>
+      )
+    }
   }
+
+  return(
+    <TouchableOpacity onPress={onPress}>
+      {renderMain()}
+    </TouchableOpacity>
+  )
 }
 
 export default ProfileImage;
